@@ -24,3 +24,8 @@ services:
     networks:
       vteam-rabbitmq:
 
+  bike:
+    image: blajban/bike:latest
+    networks:
+      vteam-rabbitmq:
+  

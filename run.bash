@@ -7,7 +7,5 @@ echo "++++ STARTING CONTAINERS ++++"
 docker-compose up -d mq
 docker-compose up -d db
 
-
-
-echo "++++ STARTING EMITTER ++++"
-# later
+echo "++++ STARTING BIKES ++++"
+docker-compose up -d --scale bike=5
