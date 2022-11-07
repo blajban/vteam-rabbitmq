@@ -41,6 +41,8 @@ Klona repot och starta RabbitMQ:
 
 Nu är RabbitMQ igång och snurrar på port 5672.
 
+Se längre ner hur man kör hela exemplet nedan.
+
 ## Ett enkelt cykel-system
 Här är ett väldigt enkelt exempel på ett litet generiskt system med cyklar som rapporterar status. Bara den enklaste funktionaliteten används, att skicka meddelanden till en kö och konsumera dem: 
 
@@ -62,32 +64,40 @@ I Dockerfile installerar vi bash och rabbitmq-c-utils som är namnet på cli-ver
 ### /logger
 Tanken med logger är att den ska lyssna på meddelanden och skriva till databasen. 
 
-Först behövs ett klientbibliotek för att koppla upp oss mot RabbitMQ. Det finns bra guider med flera olika språk på hemsidan (python, javascript, php etc). Här använder jag javascript och klientbiblioteket **amqp.node**:
+Först behövs ett klientbibliotek för att koppla upp oss mot RabbitMQ. Det finns bra guider med flera olika språk på hemsidan (python, javascript, php etc). Här använder jag javascript och klientbiblioteket **amqp.node**.
 
 Allt som har med RabbitMQ att göra finns under funktionen `amqp.connect()`:
 
-`
+```
 amqp.connect(mqHost, function(error0, connection) {
     /* code */
 });
-`
+```
 
 Funktionen skapar upp en kö och går sedan in i `channel.consume()` där den lyssnar på meddelanden, skriver ut dem och kallar på databas-funktionerna:
-`
+```
 channel.consume(queue, function(msg) {
     console.log(" [x] Received %s", msg.content);
     add_log_msg(msg.content.toJSON()).catch(console.error);
 }
-`
+```
 
 ## Kör exemplet
 
-`
+Klona repot med `git clone`
+
+Sedan:
+```
 ./run bash
 cd logger
 npm install
 node logger.js
-`
+```
+
+Köra 200 cyklar? 
+```
+docker-compose up -d --scale bike=200
+```
 
 ## Till sist
 Det återstår att se om detta är något vi alls kommer använda. Det känns som att den stora fördelen med events/messages är att det är enkelt att koppla in nya funktioner, men det krävs en del tanke för att få alla köer och meddelanden rätt. Det känns också som ett ganska enkelt sätt att hantera kommunikationen mellan microservices jämfört med att göra ett REST API. Utvärdering pågår! Men oavsett var det kul att dyka ner lite i detta och försöka lära sig lite mer.
