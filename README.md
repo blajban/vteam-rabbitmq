@@ -33,20 +33,24 @@ Det kan naturligtvis bli mer komplext än så här men i denna studie skrapar vi
 
 En notering är att RabbitMQ är själva meddelandemäklaren, under huven finns olika meddelandeprotokoll som gör det möjligt att skicka meddelandena. Defaultprotokollet kllas AMQP 0-9-1. Jag har inte dykt närmare ner i dessa i denna lilla studie.
 
+## Asynkront
+En av de stora fördelarna som jag ser det är det asynkrona. Meddelanden hamnar i kön och stannar där tills någon konsumerar i den takt den hinner. När du startar exemplet nedan kan du märka att kön redan innehåller meddelanden när du drar igång "loggern" - det första som händer är att den börjar konsumera de meddelanden som redan ligger i kön. 
+
 ## Kom igång
 Det enklaste sättet att köra igång är att använda [den officiella Docker-imagen](https://hub.docker.com/_/rabbitmq).
 
 Klona repot och starta RabbitMQ:
 `docker-compose up -d mq`
 
-Nu är RabbitMQ igång och snurrar på port 5672.
+Nu är RabbitMQ igång och snurrar på port 5672 och du kan börja använda den för dina services.
 
-Se längre ner hur man kör hela exemplet nedan.
 
 ## Ett enkelt cykel-system
 Här är ett väldigt enkelt exempel på ett litet generiskt system med cyklar som rapporterar status. Bara den enklaste funktionaliteten används, att skicka meddelanden till en kö och konsumera dem: 
 
 ![Enkel princip](https://www.rabbitmq.com/img/tutorials/python-one.png)
+
+Se längre ner hur man kör hela exemplet.
 
 Tanken är alltså att vi ska starta igång ett gäng cyklar och ha ett litet program som sitter och lyssnar på meddelandena. Bara för att visa potentialen för ett flöde har jag också lagt in en enkel mongodb i exemplet som sparar alla meddelanden. Tänk på att det inte är optimerat på något sätt, bara snabbt fixat för exemplets skull.
 
@@ -54,9 +58,11 @@ Koden är i princip hämtad från kom igång-guiderna. Längre ner ser du hur du
 
 ### /bike
 Här finns ett enkelt bash-script som använder RabbitMQ:s cli-verktyg för att skicka meddelanden till vår message broker, i det här fallet amqp-publish:
-`amqp-publish -u amqp://mq -r "$QUEUE" -p -C application/json -b "$STATUS"`
+```
+amqp-publish -u amqp://mq -r "$QUEUE" -p -C application/json -b "$status"
+```
 
-`$QUEUE` är namnet på kön som vi vill använda. `$STATUS` är vårt meddelande.
+`$QUEUE` är namnet på kön som vi vill använda. `$status` är vårt meddelande.
 
 I Dockerfile installerar vi bash och rabbitmq-c-utils som är namnet på cli-verktyget:
 `RUN apk add --no-cache bash && apk add --no-cache rabbitmq-c-utils`
@@ -100,5 +106,5 @@ docker-compose up -d --scale bike=200
 ```
 
 ## Till sist
-Det återstår att se om detta är något vi alls kommer använda. Det känns som att den stora fördelen med events/messages är att det är enkelt att koppla in nya funktioner, men det krävs en del tanke för att få alla köer och meddelanden rätt. Det känns också som ett ganska enkelt sätt att hantera kommunikationen mellan microservices jämfört med att göra ett REST API. Utvärdering pågår! Men oavsett var det kul att dyka ner lite i detta och försöka lära sig lite mer.
+Det återstår att se om detta är något vi alls kommer använda. Det känns som att den stora fördelen med events/messages är att det är enkelt att koppla in nya funktioner, men det krävs en del tanke för att få alla köer och meddelanden rätt. Det känns också som ett ganska enkelt sätt att hantera kommunikationen mellan microservices jämfört med att göra ett REST API. Jag tror ockå att det asynkrona kan hjälpa till med belastningen, inga meddelanden försvinner utan de olika servicarna kan göra jobbet i den takt de hinner med. Utvärdering pågår! Men oavsett var det kul att dyka ner lite i detta och försöka lära sig lite mer.
 
