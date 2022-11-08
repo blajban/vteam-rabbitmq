@@ -108,3 +108,4 @@ docker-compose up -d --scale bike=200
 ## Till sist
 Det återstår att se om detta är något vi alls kommer använda. Det känns som att den stora fördelen med events/messages är att det är enkelt att koppla in nya funktioner, men det krävs en del tanke för att få alla köer och meddelanden rätt. Det känns också som ett ganska enkelt sätt att hantera kommunikationen mellan microservices jämfört med att göra ett REST API. Jag tror ockå att det asynkrona kan hjälpa till med belastningen, inga meddelanden försvinner utan de olika servicarna kan göra jobbet i den takt de hinner med. Utvärdering pågår! Men oavsett var det kul att dyka ner lite i detta och försöka lära sig lite mer.
 
+**/Erik Sjöberg, grupp 3**
