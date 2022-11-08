@@ -57,14 +57,14 @@ Tanken är alltså att vi ska starta igång ett gäng cyklar och ha ett litet pr
 Koden är i princip hämtad från kom igång-guiderna. Längre ner ser du hur du kör hela exemplet.
 
 ### /bike
-Här finns ett enkelt bash-script som använder RabbitMQ:s cli-verktyg för att skicka meddelanden till vår message broker, i det här fallet amqp-publish:
+Här finns ett enkelt bash-script som använder RabbitMQ:s cli-verktyg för att skicka meddelanden till vår message broker:
 ```
 amqp-publish -u amqp://mq -r "$QUEUE" -p -C application/json -b "$status"
 ```
 
 `$QUEUE` är namnet på kön som vi vill använda. `$status` är vårt meddelande.
 
-I Dockerfile installerar vi bash och rabbitmq-c-utils som är namnet på cli-verktyget:
+I Dockerfile installerar vi bash och rabbitmq-c-utils som innehåller amqp-publish:
 `RUN apk add --no-cache bash && apk add --no-cache rabbitmq-c-utils`
 
 ### /logger
